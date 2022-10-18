@@ -2,15 +2,17 @@ package Blocks
 
 import Block
 
-class System(private val blockList: List<Block>) {
+class System(private val blockList: List<Block>, private val totalRequests : Int = 100) {
 
-    private val totalRequests : Int = 100
+
     private var processedRequests : Int = 0
     private var deniedRequests : Int = 0
 
     private var totalRequestLifetime = 0
 
     var tactCounter = 0
+
+    var queueTotalTime = 0
 
     private val statesMap : MutableMap<String, Int> = mutableMapOf()
 
@@ -52,6 +54,9 @@ class System(private val blockList: List<Block>) {
 
 
         var totalSystemRequests = 0
+        var totalQueueLength = 0
+        var totalProcessorRequests = 0
+
 
 
         while (deniedRequests + processedRequests < totalRequests) {
@@ -68,6 +73,15 @@ class System(private val blockList: List<Block>) {
             // var 41 only
             for (block in blockList) {
                 totalSystemRequests += block.getRequestsCount()
+
+                if (block is Queue) {
+                    totalQueueLength += block.getRequestsCount()
+                }
+
+                if (block is Processor || block is ProcessorPair) {
+                    totalProcessorRequests += block.getRequestsCount()
+                }
+
             }
 
 
@@ -99,14 +113,15 @@ class System(private val blockList: List<Block>) {
 
         println("Total tact count = $tactCounter")
 
-        println("Q    = ${processedRequests / totalRequests.toFloat()}")
-        println("A    = ${processedRequests / tactCounter.toFloat()}")
-        println("Pотк = ${1 - processedRequests / totalRequests.toFloat()}")
-
-        println("Lc   = ${totalSystemRequests / tactCounter.toFloat()}")
-
-//        println("Total request lifetime = $totalRequestLifetime")
-        println("Average request lifetime = ${totalRequestLifetime / totalRequests.toFloat()}")
+        println("Deny probability (Pотк) = ${1 - processedRequests / totalRequests.toFloat()}")
+        // Probability of blocking
+        println("Average queue length (Lоч) = ${totalQueueLength / tactCounter.toFloat()}")
+        println("Average number of requests in system (Lc) = ${totalSystemRequests / tactCounter.toFloat()}")
+        println("Request processing probability (Q) = ${processedRequests / totalRequests.toFloat()}")
+        println("Absolute throughput (A) = ${processedRequests / tactCounter.toFloat()}")
+        println("Average time in queue (Wоч) = ${queueTotalTime / totalRequests.toFloat()}")
+        println("Average request lifetime (Wc) = ${totalRequestLifetime / totalRequests.toFloat()}")
+        println("Processor occupancy probability (K) = ${totalProcessorRequests / tactCounter.toFloat()}")
 
     }
 }

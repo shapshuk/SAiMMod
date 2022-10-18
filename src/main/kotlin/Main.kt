@@ -6,28 +6,30 @@ import Blocks.System
 
 fun main() {
 
+    val totalRequests = 100000
+
     // Variant 41
-    val Pi1 = 0.55f
-    val Pi2 = 0.6f
-    val Pi3 = 0.75f
-
-
-    val blockList : List<Block> = listOf(
-        Blocks.Source(),
-        Blocks.Processor(Pi1),
-        Blocks.ProcessorPair(Blocks.Processor(Pi2), Blocks.Processor(Pi3))
-    )
-
-    // var 11
 //    val Pi1 = 0.55f
-//    val Pi2 = 0.7f
+//    val Pi2 = 0.6f
+//    val Pi3 = 0.75f
+//
 //
 //    val blockList : List<Block> = listOf(
 //        Blocks.Source(),
-//        Blocks.Queue(2),
 //        Blocks.Processor(Pi1),
-//        Blocks.Processor(Pi2)
+//        Blocks.ProcessorPair(Blocks.Processor(Pi2), Blocks.Processor(Pi3))
 //    )
+
+    // var 11
+    val Pi1 = 0.55f
+    val Pi2 = 0.7f
+
+    val blockList : List<Block> = listOf(
+        Blocks.Source(),
+        Blocks.Queue(2),
+        Blocks.Processor(Pi1),
+        Blocks.Processor(Pi2)
+    )
 
     // Var 26
 //    val p = 0.7f
@@ -85,6 +87,6 @@ fun main() {
 
 
 
-    val system = System(blockList)
+    val system = System(blockList, totalRequests)
     system.run()
 }
